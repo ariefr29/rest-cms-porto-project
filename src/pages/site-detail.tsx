@@ -7,11 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { EndpointPreview } from '@/components/endpoint-preview'
+import { FieldBuilder } from '@/components/field-builder'
+import { ProjectSelector } from '@/components/project-selector'
 import { Plus, Pencil, Trash2, FileJson, FolderKanban, ArrowLeft, Settings } from 'lucide-react'
 import { api, type Site, type SiteEndpoint, type Project } from '@/lib/api'
+import { type FieldDefinition, fieldsToContent, contentToFields } from '@/lib/field-types'
 
 interface SiteDetailPageProps {
   siteId: number
@@ -34,7 +36,7 @@ export function SiteDetailPage({ siteId, projects, onBack, onRefreshSites }: Sit
     projectIds: [] as number[],
   })
   const [siteForm, setSiteForm] = useState({ name: '', slug: '', description: '' })
-  const [jsonContent, setJsonContent] = useState('{}')
+  const [contentFields, setContentFields] = useState<FieldDefinition[]>([])
 
   useEffect(() => {
     loadSite()
@@ -50,7 +52,7 @@ export function SiteDetailPage({ siteId, projects, onBack, onRefreshSites }: Sit
   const handleCreateEndpoint = () => {
     setEditingEndpoint(null)
     setEndpointForm({ name: '', slug: '', type: 'page', content: {}, projectIds: [] })
-    setJsonContent('{}')
+    setContentFields([])
     setIsEndpointDialogOpen(true)
   }
 
@@ -64,7 +66,9 @@ export function SiteDetailPage({ siteId, projects, onBack, onRefreshSites }: Sit
       content: fullEndpoint.content || {},
       projectIds: fullEndpoint.projectIds || [],
     })
-    setJsonContent(JSON.stringify(fullEndpoint.content || {}, null, 2))
+    // Convert existing content to fields for editing
+    const existingContent = fullEndpoint.content || {}
+    setContentFields(contentToFields(existingContent as Record<string, unknown>))
     setIsEndpointDialogOpen(true)
   }
 
@@ -77,7 +81,10 @@ export function SiteDetailPage({ siteId, projects, onBack, onRefreshSites }: Sit
   const handleSubmitEndpoint = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const content = JSON.parse(jsonContent)
+      // Convert fields to content
+      const content = endpointForm.type === 'page'
+        ? fieldsToContent(contentFields)
+        : {}
       const data = { ...endpointForm, content }
       if (editingEndpoint) {
         await api.endpoints.update(siteId, editingEndpoint.id, data)
@@ -86,8 +93,9 @@ export function SiteDetailPage({ siteId, projects, onBack, onRefreshSites }: Sit
       }
       setIsEndpointDialogOpen(false)
       loadSite()
-    } catch {
-      alert('Invalid JSON content')
+    } catch (error) {
+      console.error('Error saving endpoint:', error)
+      alert('Error saving endpoint')
     }
   }
 
@@ -248,47 +256,26 @@ export function SiteDetailPage({ siteId, projects, onBack, onRefreshSites }: Sit
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="page">Page (Custom JSON Content)</SelectItem>
+                  <SelectItem value="page">Page (Custom Content)</SelectItem>
                   <SelectItem value="collection">Collection (Select Projects)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {endpointForm.type === 'page' ? (
-              <div className="space-y-2">
-                <Label>Content (JSON)</Label>
-                <Textarea
-                  value={jsonContent}
-                  onChange={(e) => setJsonContent(e.target.value)}
-                  rows={10}
-                  className="font-mono text-sm"
-                  placeholder='{"hero": {"title": "Welcome", "subtitle": "..."}}'
-                />
-              </div>
+              <FieldBuilder
+                fields={contentFields}
+                onChange={setContentFields}
+                projects={projects}
+              />
             ) : (
               <div className="space-y-2">
                 <Label>Select Projects ({endpointForm.projectIds.length} selected)</Label>
-                <div className="border rounded-md max-h-[300px] overflow-y-auto">
-                  {projects.map((project) => (
-                    <div
-                      key={project.id}
-                      className="flex items-center gap-3 p-3 hover:bg-muted/50 border-b last:border-0"
-                    >
-                      <Checkbox
-                        checked={endpointForm.projectIds.includes(project.id)}
-                        onCheckedChange={() => toggleProjectSelection(project.id)}
-                      />
-                      <div className="flex-1">
-                        <p className="font-medium">{project.title}</p>
-                        <p className="text-sm text-muted-foreground">{project.shortDesc}</p>
-                      </div>
-                      <Badge variant="outline">{project.year}</Badge>
-                    </div>
-                  ))}
-                  {projects.length === 0 && (
-                    <p className="p-4 text-center text-muted-foreground">No projects available</p>
-                  )}
-                </div>
+                <ProjectSelector
+                  projects={projects}
+                  selectedIds={endpointForm.projectIds}
+                  onChange={(ids) => setEndpointForm(prev => ({ ...prev, projectIds: ids }))}
+                />
               </div>
             )}
 

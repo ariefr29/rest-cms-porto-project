@@ -9,8 +9,16 @@ A modern headless CMS built with React, Hono (backend), PostgreSQL, and Drizzle 
 - **📁 Project Management** - Full CRUD operations for projects with rich text editor (TipTap)
 - **🌐 Multi-site Management** - Create and manage multiple sites/domains
 - **🔗 Custom Endpoints** - Define page or collection type endpoints per site
-- **📖 API Documentation** - Built-in API docs with copy endpoint functionality
+- **�️ Visual Field Builder** - Intuitive drag-and-drop field builder for page endpoints with support for:
+  - Text, Textarea, Rich Text fields
+  - Number, Boolean fields
+  - Image, Link fields
+  - Nested Object fields
+  - Array fields with custom templates
+  - Project selector field (for embedding project references)
+- **�📖 API Documentation** - Built-in API docs with copy endpoint functionality
 - **🚀 Public API** - RESTful API for consuming content: `/api/v1/:siteSlug/:endpointSlug`
+- **🔄 Project Resolution** - Automatic resolution of project references in API responses
 - **🎨 Modern UI** - Built with React, Tailwind CSS, and Radix UI components
 
 ## 🛠️ Tech Stack
