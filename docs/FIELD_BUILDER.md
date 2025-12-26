@@ -24,6 +24,7 @@ The Field Builder provides an intuitive interface to define the content structur
 - 🔄 **JSON Toggle** - Switch between visual and JSON mode
 - 📦 **Nested Structures** - Create complex content hierarchies
 - 🔗 **Project Integration** - Embed project selections directly
+- 🌙 **Dark Mode Ready** - Optimized for both light and dark viewing modes
 
 ---
 

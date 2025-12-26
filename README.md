@@ -2,17 +2,20 @@
 
 A modern, flexible headless CMS built with React and Hono. Create custom content structures visually and consume them via a clean REST API.
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](./docs/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](./docs/CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
 ## ✨ Features
 
 | Feature | Description |
 |---------|-------------|
+| 📊 **Modern Dashboard** | Full overview with stats and quick-start guides |
+| 🌙 **YouTube Dark Mode** | Pro dark theme with persistent theme switching |
 | 📁 **Project Management** | Full CRUD with rich text editor (TipTap) |
 | 🌐 **Multi-site Support** | Manage multiple sites from one dashboard |
 | 🛠️ **Visual Field Builder** | Create page content with drag-and-drop fields |
 | 🔗 **Custom Endpoints** | Define page or collection endpoints per site |
+| 🚀 **Premium UX** | Skeleton loaders, page transitions & responsive sidebar |
 | 🚀 **Public API** | RESTful API at `/api/v1/:site/:endpoint` |
 | 📖 **API Documentation** | Built-in docs page with copy functionality |
 
@@ -98,7 +101,7 @@ cms-headless-project/
 │   └── index.ts            # Server entry
 ├── src/
 │   ├── components/
-│   │   ├── ui/             # Reusable UI components
+│   │   ├── ui/             # Reusable UI components (Skeleton, Button, etc)
 │   │   ├── field-builder.tsx
 │   │   └── project-selector.tsx
 │   ├── lib/

@@ -5,7 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2024-12-26
+## [1.2.0] - 2024-12-26
+
+### Added
+- **Modern Dashboard** - Implemented a new landing page for the dashboard with:
+  - Real-time statistics for Projects and Sites.
+  - Interactive "Quick Start Guide" with visual indicators.
+  - Theme-aware design using modern card layouts.
+  
+- **Dark Mode System** - Comprehensive dark mode implementation:
+  - **YouTube True Dark** palette for superior contrast and visual comfort.
+  - **Persistent Theme**: Selected theme is saved to `localStorage` and applied across sessions.
+  - **Animated Toggle**: Added a theme switcher in the Sidebar with smooth icon transitions.
+  - **Hybrid Design**: Maintained the professional dark sidebar even in light mode for structural consistency.
+
+- **Skeleton Loading UI** - Added pulse-animated placeholders for all data-fetching states:
+  - Table rows in Projects page.
+  - Site details and endpoint cards.
+  - API Documentation previews.
+  
+- **Premium Design Enhancements**:
+  - **Page Transitions**: Smooth fade-in animations for all navigation routes.
+  - **Typography**: Integrated the **Outfit** Google Font for a more modern and premium aesthetic.
+  - **Responsive Sidebar**: Re-engineered the mobile menu with an animated backdrop and better header UX.
+  - **Design System**: Standardized on theme variables (`bg-background`, `text-foreground`, etc.) for all custom components.
+
+### Fixed
+- **Mobile Navigation**: Fixed backdrop contrast and header coloring in mobile view.
+- **Color Consistency**: Removed all hardcoded slate colors to ensure 100% theme compatibility.
+
+### Changed
+- **Styling**: Refined the YouTube-inspired dark theme with neutral dark greys (`0 0% 7%`) for better accessibility.
 
 ### Added
 - **Visual Field Builder** - New intuitive field builder for Page-type endpoints with support for:
