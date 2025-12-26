@@ -2,14 +2,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { EndpointPreview } from '@/components/endpoint-preview'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { Site, Project } from '@/lib/api'
 
 interface ApiDocsPageProps {
   sites: Site[]
   projects: Project[]
+  isLoading?: boolean
 }
 
-export function ApiDocsPage({ sites, projects }: ApiDocsPageProps) {
+export function ApiDocsPage({ sites, projects, isLoading }: ApiDocsPageProps) {
   const sampleProject = projects[0] || {
     id: 1,
     title: 'Sample Project',
@@ -19,7 +21,7 @@ export function ApiDocsPage({ sites, projects }: ApiDocsPageProps) {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 animate-in fade-in duration-500">
       <div>
         <h1 className="text-2xl font-bold">API Documentation</h1>
         <p className="text-muted-foreground">REST API endpoints reference</p>
@@ -79,18 +81,24 @@ export function ApiDocsPage({ sites, projects }: ApiDocsPageProps) {
                     Site: {site.name}
                     <Badge variant="outline">{site.slug}</Badge>
                   </h4>
-                  {(site.endpoints || []).map((endpoint) => (
-                    <EndpointPreview
-                      key={endpoint.id}
-                      path={`/api/v1/${site.slug}/${endpoint.slug}`}
-                      description={`${endpoint.type === 'page' ? 'Page content' : 'Project collection'}: ${endpoint.name}`}
-                      sampleResponse={
-                        endpoint.type === 'page'
-                          ? { name: endpoint.name, slug: endpoint.slug, content: { '...': '...' } }
-                          : { name: endpoint.name, slug: endpoint.slug, data: [{ id: 1, title: '...', '...': '...' }] }
-                      }
-                    />
-                  ))}
+                  {isLoading ? (
+                    <div className="space-y-4">
+                      <Skeleton className="h-24 w-full" />
+                      <Skeleton className="h-24 w-full" />
+                    </div>
+                  ) : (
+                    (site.endpoints || []).map((endpoint) => (
+                      <EndpointPreview
+                        key={endpoint.id}
+                        path={`/api/v1/${site.slug}/${endpoint.slug}`}
+                        description={`${endpoint.type === 'page' ? 'Page content' : 'Project collection'}: ${endpoint.name}`}
+                        sampleResponse={
+                          endpoint.type === 'page'
+                            ? { name: endpoint.name, slug: endpoint.slug, content: { '...': '...' } }
+                            : { name: endpoint.name, slug: endpoint.slug, data: [{ id: 1, title: '...', '...': '...' }] }
+                        }
+                      />
+                    )))}
                 </div>
               ))}
             </CardContent>

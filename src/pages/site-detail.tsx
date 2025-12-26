@@ -15,6 +15,8 @@ import { Plus, Pencil, Trash2, FileJson, FolderKanban, ArrowLeft, Settings } fro
 import { api, type Site, type SiteEndpoint, type Project } from '@/lib/api'
 import { type FieldDefinition, fieldsToContent, contentToFields } from '@/lib/field-types'
 
+import { Skeleton } from '@/components/ui/skeleton'
+
 interface SiteDetailPageProps {
   siteId: number
   projects: Project[]
@@ -43,6 +45,7 @@ export function SiteDetailPage({ siteId, projects, onBack, onRefreshSites }: Sit
   }, [siteId])
 
   const loadSite = async () => {
+    // Artificial small delay for UX demonstration if needed, but not necessary here
     const data = await api.sites.get(siteId)
     setSite(data)
     setEndpoints(data.endpoints || [])
@@ -131,11 +134,51 @@ export function SiteDetailPage({ siteId, projects, onBack, onRefreshSites }: Sit
   }
 
   if (!site) {
-    return <div className="p-6">Loading...</div>
+    return (
+      <div className="p-6 space-y-6 animate-in fade-in duration-500">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-10 w-10 rounded-lg" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+          <Skeleton className="h-10 w-24" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+
+        <div className="grid gap-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="border-border shadow-sm">
+              <CardHeader className="pb-3 border-b border-border/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-5 w-40" />
+                      <div className="flex gap-2">
+                        <Skeleton className="h-4 w-12" />
+                        <Skeleton className="h-4 w-52" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Skeleton className="h-8 w-8 rounded" />
+                    <Skeleton className="h-8 w-8 rounded" />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <Skeleton className="h-32 w-full rounded-lg" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={onBack}>
           <ArrowLeft className="h-4 w-4" />

@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { FolderKanban, Globe, FileCode, ChevronRight, Plus, LayoutDashboard } from 'lucide-react'
+import { FolderKanban, Globe, FileCode, ChevronRight, Plus, LayoutDashboard, Sun, Moon } from 'lucide-react'
 import type { Site } from '@/lib/api'
 
 interface SidebarProps {
@@ -10,31 +10,52 @@ interface SidebarProps {
   sites: Site[]
   currentPage: string
   currentSiteId?: number
+  theme?: 'light' | 'dark'
+  onToggleTheme?: () => void
   onNavigate: (page: string, siteId?: number) => void
   onAddSite: () => void
 }
 
-export function Sidebar({ className, sites, currentPage, currentSiteId, onNavigate, onAddSite }: SidebarProps) {
+export function Sidebar({
+  className,
+  sites,
+  currentPage,
+  currentSiteId,
+  theme,
+  onToggleTheme,
+  onNavigate,
+  onAddSite
+}: SidebarProps) {
   return (
-    <div className={cn("w-64 border-r border-slate-800 bg-slate-950 flex flex-col h-screen transition-all duration-300 ease-in-out text-slate-100", className)}>
-      <div className="p-4 border-b border-slate-800">
-        <h1 className="font-bold text-lg text-white tracking-tight flex items-center gap-2">
-          <div className="w-8 h-8 rounded bg-blue-600 flex items-center justify-center text-white">
-            <Globe className="h-5 w-5" />
-          </div>
-          CMS
-        </h1>
-        <p className="text-xs text-slate-400 mt-1 font-medium">Headless API Manager</p>
+    <div className={cn("w-64 border-r border-slate-800 bg-[#0f172a] dark:bg-background dark:border-border flex flex-col h-screen transition-all duration-300 ease-in-out text-slate-100 dark:text-foreground", className)}>
+      <div className="p-4 border-b border-slate-800 dark:border-border flex items-center justify-between">
+        <div>
+          <h1 className="font-bold text-lg text-white dark:text-foreground tracking-tight flex items-center gap-2">
+            <div className="w-8 h-8 rounded bg-blue-600 flex items-center justify-center text-white">
+              <Globe className="h-5 w-5" />
+            </div>
+            CMS
+          </h1>
+          <p className="text-xs text-slate-400 dark:text-muted-foreground mt-1 font-medium">Headless API Manager</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleTheme}
+          className="h-8 w-8 text-slate-400 hover:text-white dark:text-muted-foreground dark:hover:text-foreground hover:bg-slate-800 dark:hover:bg-accent rounded-full transition-colors"
+        >
+          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </Button>
       </div>
 
       <ScrollArea className="flex-1 px-3 py-6">
         <div className="space-y-1 mb-6">
-          <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Main</p>
+          <p className="px-4 text-xs font-semibold text-slate-500 dark:text-muted-foreground uppercase tracking-wider mb-2">Main</p>
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all duration-200 ease-out",
-              currentPage === 'dashboard' && "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-900/20"
+              "w-full justify-start text-slate-300 dark:text-muted-foreground hover:text-white dark:hover:text-foreground hover:bg-slate-800/80 dark:hover:bg-accent transition-all duration-200 ease-out",
+              currentPage === 'dashboard' && "bg-blue-600 text-white hover:bg-blue-700 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 shadow-lg shadow-blue-900/20"
             )}
             onClick={() => onNavigate('dashboard')}
           >
@@ -45,8 +66,8 @@ export function Sidebar({ className, sites, currentPage, currentSiteId, onNaviga
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all duration-200 ease-out",
-              currentPage === 'projects' && "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-900/20"
+              "w-full justify-start text-slate-300 dark:text-muted-foreground hover:text-white dark:hover:text-foreground hover:bg-slate-800/80 dark:hover:bg-accent transition-all duration-200 ease-out",
+              currentPage === 'projects' && "bg-blue-600 text-white hover:bg-blue-700 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 shadow-lg shadow-blue-900/20"
             )}
             onClick={() => onNavigate('projects')}
           >
@@ -57,8 +78,8 @@ export function Sidebar({ className, sites, currentPage, currentSiteId, onNaviga
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all duration-200 ease-out",
-              currentPage === 'api-docs' && "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-900/20"
+              "w-full justify-start text-slate-300 dark:text-muted-foreground hover:text-white dark:hover:text-foreground hover:bg-slate-800/80 dark:hover:bg-accent transition-all duration-200 ease-out",
+              currentPage === 'api-docs' && "bg-blue-600 text-white hover:bg-blue-700 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 shadow-lg shadow-blue-900/20"
             )}
             onClick={() => onNavigate('api-docs')}
           >
@@ -68,18 +89,18 @@ export function Sidebar({ className, sites, currentPage, currentSiteId, onNaviga
         </div>
 
         <div className="mb-2 px-4 flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Websites</span>
+          <span className="text-xs font-semibold text-slate-500 dark:text-muted-foreground uppercase tracking-wider">Websites</span>
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full"
+            className="h-6 w-6 text-slate-400 dark:text-muted-foreground hover:text-white dark:hover:text-foreground hover:bg-slate-800 dark:hover:bg-accent rounded-full"
             onClick={onAddSite}
           >
             <Plus className="h-4 w-4" />
           </Button>
         </div>
 
-        <Separator className="bg-slate-800/50 mb-3 mx-2 w-auto" />
+        <Separator className="bg-slate-800/50 dark:bg-border mb-3 mx-2 w-auto" />
 
         <div className="space-y-1">
           {sites.map((site) => (
@@ -87,8 +108,8 @@ export function Sidebar({ className, sites, currentPage, currentSiteId, onNaviga
               key={site.id}
               variant="ghost"
               className={cn(
-                "w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all duration-200 ease-out group",
-                currentPage === 'site' && currentSiteId === site.id && "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-900/20"
+                "w-full justify-start text-slate-300 dark:text-muted-foreground hover:text-white dark:hover:text-foreground hover:bg-slate-800/80 dark:hover:bg-accent transition-all duration-200 ease-out group",
+                currentPage === 'site' && currentSiteId === site.id && "bg-blue-600 text-white hover:bg-blue-700 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 shadow-lg shadow-blue-900/20"
               )}
               onClick={() => onNavigate('site', site.id)}
             >
@@ -99,22 +120,22 @@ export function Sidebar({ className, sites, currentPage, currentSiteId, onNaviga
           ))}
 
           {sites.length === 0 && (
-            <div className="text-center py-8 border-2 border-dashed border-slate-800 rounded-lg mx-2 bg-slate-900/50">
-              <p className="text-xs text-slate-500">No sites created yet.</p>
-              <Button variant="link" className="h-auto p-0 text-blue-400 text-xs mt-1" onClick={onAddSite}>Create one</Button>
+            <div className="text-center py-8 border-2 border-dashed border-slate-800 dark:border-border rounded-lg mx-2 bg-slate-900/50 dark:bg-card/50">
+              <p className="text-xs text-slate-500 dark:text-muted-foreground">No sites created yet.</p>
+              <Button variant="link" className="h-auto p-0 text-blue-400 dark:text-blue-500 text-xs mt-1" onClick={onAddSite}>Create one</Button>
             </div>
           )}
         </div>
       </ScrollArea>
 
-      <div className="p-4 bg-slate-950 border-t border-slate-800">
+      <div className="p-4 bg-[#0f172a] dark:bg-background border-t border-slate-800 dark:border-border">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center text-xs font-bold text-white ring-2 ring-slate-800">
+          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center text-xs font-bold text-white ring-2 ring-slate-800 dark:ring-border">
             A
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">Admin User</p>
-            <p className="text-xs text-slate-500 truncate">admin@example.com</p>
+            <p className="text-sm font-medium text-white dark:text-foreground truncate">Admin User</p>
+            <p className="text-xs text-slate-500 dark:text-muted-foreground truncate">admin@example.com</p>
           </div>
         </div>
       </div>

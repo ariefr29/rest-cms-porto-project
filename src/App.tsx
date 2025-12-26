@@ -17,10 +17,14 @@ import { cn } from '@/lib/utils'
 type Page = 'dashboard' | 'projects' | 'site' | 'api-docs'
 
 function App() {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('cms-theme') as 'light' | 'dark') || 'light'
+  })
   const [currentPage, setCurrentPage] = useState<Page>('dashboard')
   const [currentSiteId, setCurrentSiteId] = useState<number | undefined>()
   const [sites, setSites] = useState<Site[]>([])
   const [projects, setProjects] = useState<Project[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const [isAddSiteOpen, setIsAddSiteOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -30,10 +34,28 @@ function App() {
     loadData()
   }, [])
 
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    localStorage.setItem('cms-theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light')
+  }
+
   const loadData = async () => {
-    const [sitesData, projectsData] = await Promise.all([api.sites.list(), api.projects.list()])
-    setSites(sitesData)
-    setProjects(projectsData)
+    setIsLoading(true)
+    try {
+      const [sitesData, projectsData] = await Promise.all([api.sites.list(), api.projects.list()])
+      setSites(sitesData)
+      setProjects(projectsData)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const loadSites = async () => {
@@ -69,33 +91,35 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex h-screen bg-background overflow-hidden font-sans text-foreground">
       {/* Mobile Backdrop */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm md:hidden animate-in fade-in duration-200"
+          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden animate-in fade-in duration-200"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       <Sidebar
         className={cn(
-          "fixed inset-y-0 left-0 z-50 md:static md:flex shadow-xl md:shadow-none z-50",
+          "fixed inset-y-0 left-0 z-50 md:static md:flex shadow-xl md:shadow-none",
           !isMobileMenuOpen && "-translate-x-full md:translate-x-0"
         )}
         sites={sites}
         currentPage={currentPage}
         currentSiteId={currentSiteId}
+        theme={theme}
+        onToggleTheme={toggleTheme}
         onNavigate={handleNavigate}
         onAddSite={() => setIsAddSiteOpen(true)}
       />
 
-      <main className="flex-1 flex flex-col overflow-hidden relative">
-        <header className="md:hidden h-16 border-b bg-white/80 backdrop-blur flex items-center px-4 shrink-0 z-20">
-          <Button variant="ghost" size="icon" className="text-slate-600" onClick={() => setIsMobileMenuOpen(true)}>
+      <main className="flex-1 flex flex-col overflow-hidden relative bg-background">
+        <header className="md:hidden h-16 border-b bg-background/80 backdrop-blur flex items-center px-4 shrink-0 z-20">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={() => setIsMobileMenuOpen(true)}>
             <Menu className="h-6 w-6" />
           </Button>
-          <span className="ml-3 font-bold text-lg text-slate-800 flex items-center gap-2">
+          <span className="ml-3 font-bold text-lg text-foreground flex items-center gap-2">
             <div className="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-white">
               <Globe className="h-3 w-3" />
             </div>
@@ -112,7 +136,7 @@ function App() {
               />
             )}
 
-            {currentPage === 'projects' && <ProjectsPage projects={projects} onRefresh={loadProjects} />}
+            {currentPage === 'projects' && <ProjectsPage projects={projects} onRefresh={loadProjects} isLoading={isLoading} />}
 
             {currentPage === 'site' && currentSiteId && (
               <SiteDetailPage
@@ -123,7 +147,7 @@ function App() {
               />
             )}
 
-            {currentPage === 'api-docs' && <ApiDocsPage sites={sites} projects={projects} />}
+            {currentPage === 'api-docs' && <ApiDocsPage sites={sites} projects={projects} isLoading={isLoading} />}
           </div>
         </div>
       </main>
