@@ -5,10 +5,13 @@ import { SiteDetailPage } from '@/pages/site-detail'
 import { ApiDocsPage } from '@/pages/api-docs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { api, type Site, type Project } from '@/lib/api'
+import { Menu, Globe } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type Page = 'projects' | 'site' | 'api-docs'
 
@@ -17,7 +20,9 @@ function App() {
   const [currentSiteId, setCurrentSiteId] = useState<number | undefined>()
   const [sites, setSites] = useState<Site[]>([])
   const [projects, setProjects] = useState<Project[]>([])
+
   const [isAddSiteOpen, setIsAddSiteOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [newSite, setNewSite] = useState({ name: '', slug: '', description: '' })
 
   useEffect(() => {
@@ -43,6 +48,7 @@ function App() {
   const handleNavigate = (page: string, siteId?: number) => {
     setCurrentPage(page as Page)
     setCurrentSiteId(siteId)
+    setIsMobileMenuOpen(false)
   }
 
   const handleAddSite = async (e: React.FormEvent) => {
@@ -62,8 +68,20 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+      {/* Mobile Backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm md:hidden animate-in fade-in duration-200"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       <Sidebar
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 md:static md:flex shadow-xl md:shadow-none z-50",
+          !isMobileMenuOpen && "-translate-x-full md:translate-x-0"
+        )}
         sites={sites}
         currentPage={currentPage}
         currentSiteId={currentSiteId}
@@ -71,19 +89,35 @@ function App() {
         onAddSite={() => setIsAddSiteOpen(true)}
       />
 
-      <main className="flex-1 overflow-auto">
-        {currentPage === 'projects' && <ProjectsPage projects={projects} onRefresh={loadProjects} />}
+      <main className="flex-1 flex flex-col overflow-hidden relative">
+        <header className="md:hidden h-16 border-b bg-white/80 backdrop-blur flex items-center px-4 shrink-0 z-20">
+          <Button variant="ghost" size="icon" className="text-slate-600" onClick={() => setIsMobileMenuOpen(true)}>
+            <Menu className="h-6 w-6" />
+          </Button>
+          <span className="ml-3 font-bold text-lg text-slate-800 flex items-center gap-2">
+            <div className="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-white">
+              <Globe className="h-3 w-3" />
+            </div>
+            CMS Headless
+          </span>
+        </header>
 
-        {currentPage === 'site' && currentSiteId && (
-          <SiteDetailPage
-            siteId={currentSiteId}
-            projects={projects}
-            onBack={() => handleNavigate('projects')}
-            onRefreshSites={loadSites}
-          />
-        )}
+        <div className="flex-1 overflow-auto p-4 md:p-8 animate-in slide-in-from-right-2 duration-300 ease-out">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {currentPage === 'projects' && <ProjectsPage projects={projects} onRefresh={loadProjects} />}
 
-        {currentPage === 'api-docs' && <ApiDocsPage sites={sites} projects={projects} />}
+            {currentPage === 'site' && currentSiteId && (
+              <SiteDetailPage
+                siteId={currentSiteId}
+                projects={projects}
+                onBack={() => handleNavigate('projects')}
+                onRefreshSites={loadSites}
+              />
+            )}
+
+            {currentPage === 'api-docs' && <ApiDocsPage sites={sites} projects={projects} />}
+          </div>
+        </div>
       </main>
 
       <Dialog open={isAddSiteOpen} onOpenChange={setIsAddSiteOpen}>
