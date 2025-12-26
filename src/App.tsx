@@ -181,7 +181,7 @@ function App() {
           </form>
         </DialogContent>
       </Dialog>
-    </div >
+    </div>
   )
 }
 
