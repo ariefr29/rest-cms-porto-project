@@ -95,20 +95,16 @@ npm run dev
 cms-headless-project/
 ├── docs/                   # Documentation
 ├── drizzle/                # Database migrations
-├── server/src/
-│   ├── db/                 # Database connection & schema
-│   ├── routes/             # API routes
-│   └── index.ts            # Server entry
+├── server/src/             # Backend (Hono + Drizzle)
 ├── src/
 │   ├── components/
-│   │   ├── ui/             # Reusable UI components (Skeleton, Button, etc)
-│   │   ├── field-builder.tsx
-│   │   └── project-selector.tsx
-│   ├── lib/
-│   │   ├── api.ts          # API client
-│   │   └── field-types.ts  # Field type definitions
-│   ├── pages/              # Page components
-│   └── App.tsx
+│   │   ├── dialogs/        # Modal components (Extracted)
+│   │   ├── ui/             # Shadcn-like UI components
+│   │   └── ...
+│   ├── hooks/              # Custom hooks (useTheme, useCmsData)
+│   ├── lib/                # API client & logic utilities
+│   ├── pages/              # Main dashboard views
+│   └── App.tsx             # Clean entry point
 └── package.json
 ```
 
