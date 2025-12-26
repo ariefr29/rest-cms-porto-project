@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Sidebar } from '@/components/layout/sidebar'
+import { DashboardPage } from '@/pages/dashboard'
 import { ProjectsPage } from '@/pages/projects'
 import { SiteDetailPage } from '@/pages/site-detail'
 import { ApiDocsPage } from '@/pages/api-docs'
@@ -13,10 +14,10 @@ import { api, type Site, type Project } from '@/lib/api'
 import { Menu, Globe } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-type Page = 'projects' | 'site' | 'api-docs'
+type Page = 'dashboard' | 'projects' | 'site' | 'api-docs'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('projects')
+  const [currentPage, setCurrentPage] = useState<Page>('dashboard')
   const [currentSiteId, setCurrentSiteId] = useState<number | undefined>()
   const [sites, setSites] = useState<Site[]>([])
   const [projects, setProjects] = useState<Project[]>([])
@@ -104,6 +105,13 @@ function App() {
 
         <div className="flex-1 overflow-auto p-4 md:p-8 animate-in slide-in-from-right-2 duration-300 ease-out">
           <div className="max-w-7xl mx-auto space-y-6">
+            {currentPage === 'dashboard' && (
+              <DashboardPage
+                stats={{ projectsCount: projects.length, sitesCount: sites.length }}
+                onNavigate={handleNavigate}
+              />
+            )}
+
             {currentPage === 'projects' && <ProjectsPage projects={projects} onRefresh={loadProjects} />}
 
             {currentPage === 'site' && currentSiteId && (
@@ -173,7 +181,7 @@ function App() {
           </form>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   )
 }
 

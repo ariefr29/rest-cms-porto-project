@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { FolderKanban, Globe, FileCode, ChevronRight, Plus } from 'lucide-react'
+import { FolderKanban, Globe, FileCode, ChevronRight, Plus, LayoutDashboard } from 'lucide-react'
 import type { Site } from '@/lib/api'
 
 interface SidebarProps {
@@ -30,6 +30,18 @@ export function Sidebar({ className, sites, currentPage, currentSiteId, onNaviga
       <ScrollArea className="flex-1 px-3 py-6">
         <div className="space-y-1 mb-6">
           <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Main</p>
+          <Button
+            variant="ghost"
+            className={cn(
+              "w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all duration-200 ease-out",
+              currentPage === 'dashboard' && "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-900/20"
+            )}
+            onClick={() => onNavigate('dashboard')}
+          >
+            <LayoutDashboard className="mr-3 h-4 w-4" />
+            Dashboard
+          </Button>
+
           <Button
             variant="ghost"
             className={cn(
