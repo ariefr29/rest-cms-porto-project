@@ -1,13 +1,9 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { RichTextEditor } from '@/components/rich-text-editor'
+import { ProjectDialog } from '@/components/dialogs/project-dialog'
 import { EndpointPreview } from '@/components/endpoint-preview'
 import { Plus, Pencil, Trash2, ExternalLink, Github, Figma } from 'lucide-react'
 import { api, type Project } from '@/lib/api'
@@ -19,38 +15,17 @@ interface ProjectsPageProps {
   isLoading?: boolean
 }
 
-const emptyProject: Partial<Project> = {
-  title: '',
-  slug: '',
-  year: new Date().getFullYear(),
-  client: '',
-  role: '',
-  techStack: [],
-  shortDesc: '',
-  detailDesc: '',
-  urlLive: '',
-  urlGithub: '',
-  urlFigma: '',
-  thumbnail: '',
-}
-
 export function ProjectsPage({ projects, onRefresh, isLoading }: ProjectsPageProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null)
-  const [formData, setFormData] = useState<Partial<Project>>(emptyProject)
-  const [techInput, setTechInput] = useState('')
 
   const handleCreate = () => {
     setEditingProject(null)
-    setFormData(emptyProject)
-    setTechInput('')
     setIsDialogOpen(true)
   }
 
   const handleEdit = (project: Project) => {
     setEditingProject(project)
-    setFormData(project)
-    setTechInput('')
     setIsDialogOpen(true)
   }
 
@@ -60,8 +35,7 @@ export function ProjectsPage({ projects, onRefresh, isLoading }: ProjectsPagePro
     onRefresh()
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (formData: Partial<Project>) => {
     if (editingProject?.id) {
       await api.projects.update(editingProject.id, formData)
     } else {
@@ -69,30 +43,6 @@ export function ProjectsPage({ projects, onRefresh, isLoading }: ProjectsPagePro
     }
     setIsDialogOpen(false)
     onRefresh()
-  }
-
-  const handleAddTech = () => {
-    if (techInput.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        techStack: [...(prev.techStack || []), techInput.trim()],
-      }))
-      setTechInput('')
-    }
-  }
-
-  const handleRemoveTech = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      techStack: (prev.techStack || []).filter((_, i) => i !== index),
-    }))
-  }
-
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
   }
 
   return (
@@ -133,7 +83,6 @@ export function ProjectsPage({ projects, onRefresh, isLoading }: ProjectsPagePro
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                // Skeleton Rows
                 Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={i}>
                     <TableCell>
@@ -232,157 +181,12 @@ export function ProjectsPage({ projects, onRefresh, isLoading }: ProjectsPagePro
         </CardContent>
       </Card>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingProject ? 'Edit Project' : 'Create Project'}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      title: e.target.value,
-                      slug: !editingProject ? generateSlug(e.target.value) : prev.slug,
-                    }))
-                  }}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="slug">Slug *</Label>
-                <Input
-                  id="slug"
-                  value={formData.slug}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="year">Year</Label>
-                <Input
-                  id="year"
-                  type="number"
-                  value={formData.year || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, year: parseInt(e.target.value) || undefined }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="client">Client</Label>
-                <Input
-                  id="client"
-                  value={formData.client || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, client: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Input
-                  id="role"
-                  value={formData.role || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, role: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Tech Stack</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={techInput}
-                  onChange={(e) => setTechInput(e.target.value)}
-                  placeholder="Add technology..."
-                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTech())}
-                />
-                <Button type="button" onClick={handleAddTech}>
-                  Add
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {(formData.techStack || []).map((tech, i) => (
-                  <Badge key={i} variant="secondary" className="cursor-pointer" onClick={() => handleRemoveTech(i)}>
-                    {tech} ×
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="shortDesc">Short Description</Label>
-              <Textarea
-                id="shortDesc"
-                value={formData.shortDesc || ''}
-                onChange={(e) => setFormData((prev) => ({ ...prev, shortDesc: e.target.value }))}
-                rows={2}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Detail Description</Label>
-              <RichTextEditor
-                content={formData.detailDesc || ''}
-                onChange={(content) => setFormData((prev) => ({ ...prev, detailDesc: content }))}
-                placeholder="Write detailed description..."
-              />
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="urlLive">Live URL</Label>
-                <Input
-                  id="urlLive"
-                  type="url"
-                  value={formData.urlLive || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, urlLive: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="urlGithub">GitHub URL</Label>
-                <Input
-                  id="urlGithub"
-                  type="url"
-                  value={formData.urlGithub || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, urlGithub: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="urlFigma">Figma URL</Label>
-                <Input
-                  id="urlFigma"
-                  type="url"
-                  value={formData.urlFigma || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, urlFigma: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="thumbnail">Thumbnail URL</Label>
-              <Input
-                id="thumbnail"
-                type="url"
-                value={formData.thumbnail || ''}
-                onChange={(e) => setFormData((prev) => ({ ...prev, thumbnail: e.target.value }))}
-              />
-            </div>
-
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">{editingProject ? 'Update' : 'Create'}</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <ProjectDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        project={editingProject}
+        onSubmit={handleSubmit}
+      />
     </div>
   )
 }
