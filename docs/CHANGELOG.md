@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2024-12-27
+
+### Added
+- **JWT Authentication** - Implemented a secure authentication layer for the CMS management dashboard:
+  - **Login System**: Secure login page with credential validation against environment variables.
+  - **JWT Tokens**: Session management using JSON Web Tokens.
+  - **Secure Cookies**: Tokens are stored in `HTTP-only` cookies to prevent XSS attacks.
+  - **CORS & Credentials**: Updated API client and server configuration to support cross-origin authenticated requests.
+
+- **Protected Routes & APIs**:
+  - **Backend Guard**: Implemented custom auth middleware for Hono to protect all management endpoints (`/api/projects`, `/api/sites`, etc.).
+  - **Frontend Guard**: Added conditional rendering and redirection logic in the main `App` component to enforce login.
+  - **Auto-Logout**: Implemented session termination with automatic cookie clearing.
+
+- **Refined Data Loading Flow**:
+  - Re-engineered the data-fetching sequence to wait for successful authentication, ensuring a cleaner console (no 401 errors) and better user experience.
+
+### Fixed
+- **Authentication Bypass**: Fixed an issue where the dashboard was accessible without login after page refreshes.
+- **Console Errors**: Resolved fetch 401 errors during the initial application load by handling auth verification more gracefully.
+
+### Changed
+- **Sidebar UX**: Added a dedicated logout button with a clear red visual indicator for better discoverability.
+
 ## [1.2.0] - 2024-12-26
 
 ### Added

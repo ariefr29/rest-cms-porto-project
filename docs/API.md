@@ -4,6 +4,7 @@ Complete API documentation for CMS Headless Project.
 
 ## Table of Contents
 
+- [Authentication](#authentication)
 - [CMS API (Internal)](#cms-api-internal)
   - [Projects](#projects)
   - [Sites](#sites)
@@ -12,6 +13,31 @@ Complete API documentation for CMS Headless Project.
   - [Projects Public](#projects-public)
   - [Site Content](#site-content)
 - [Response Examples](#response-examples)
+
+---
+
+## Authentication
+
+The Internal CMS API is protected using JWT (JSON Web Token) stored in HTTP-only cookies.
+
+### Auth Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | Authenticate and receive session cookie |
+| GET | `/api/auth/verify` | Verify current session status |
+| POST | `/api/auth/logout` | Clear session cookie |
+
+#### Login Body
+
+```json
+{
+  "username": "admin",
+  "password": "yourpassword"
+}
+```
+
+> **Note:** Credentials are configured via environment variables on the server.
 
 ---
 
@@ -208,5 +234,6 @@ All errors follow this format:
 | Status Code | Description |
 |-------------|-------------|
 | 400 | Bad Request - Invalid input |
+| 401 | Unauthorized - Session missing or expired |
 | 404 | Not Found - Resource not found |
 | 500 | Internal Server Error |

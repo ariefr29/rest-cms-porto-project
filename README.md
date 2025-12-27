@@ -2,7 +2,7 @@
 
 A modern, flexible headless CMS built with React and Hono. Create custom content structures visually and consume them via a clean REST API.
 
-[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](./docs/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](./docs/CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
 ## ✨ Features
@@ -17,7 +17,19 @@ A modern, flexible headless CMS built with React and Hono. Create custom content
 | 🔗 **Custom Endpoints** | Define page or collection endpoints per site |
 | 🚀 **Premium UX** | Skeleton loaders, page transitions & responsive sidebar |
 | 🚀 **Public API** | RESTful API at `/api/v1/:site/:endpoint` |
+| 🛡️ **JWT Security** | Protected management dashboard & APIs |
 | 📖 **API Documentation** | Built-in docs page with copy functionality |
+
+---
+
+## 🔒 Security & Authentication
+
+The management dashboard is protected by a secure JWT-based authentication system.
+
+- **Admin Credentials**: Configured via `.env` file (`ADMIN_USER`, `ADMIN_PASS`).
+- **Session Management**: JWT tokens are stored in secure, `HTTP-only` cookies.
+- **CSRF Protection**: SameSite cookie attributes and CORS restrictions.
+- **Protected APIs**: All management operations (Sites, Projects, Endpoints) require a valid session.
 
 ### Visual Field Builder
 
@@ -52,7 +64,10 @@ npm install
 
 # Setup environment
 cp .env.example .env
-# Edit .env with your database credentials
+# Edit .env with your database credentials and admin settings
+# ADMIN_USER=admin
+# ADMIN_PASS=yourpassword
+# JWT_SECRET=random_string
 
 # Run migrations
 npm run db:migrate
