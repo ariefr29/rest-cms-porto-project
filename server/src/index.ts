@@ -40,10 +40,15 @@ const authMiddleware = async (c: any, next: any) => {
 // Auth routes - login and logout are public
 app.post('/api/auth/login', async (c) => {
   const body = await c.req.json()
-  const adminUser = process.env.ADMIN_USER || 'admin'
-  const adminPass = process.env.ADMIN_PASS || 'admin123'
 
-  if (body.username === adminUser && body.password === adminPass) {
+  // Trim values to avoid accidental whitespace issues from .env
+  const adminUser = (process.env.ADMIN_USER || 'admin').trim()
+  const adminPass = (process.env.ADMIN_PASS || 'admin123').trim()
+
+  const receivedUser = (body.username || '').trim()
+  const receivedPass = (body.password || '') // Don't trim received password as it might have intentional spaces
+
+  if (receivedUser === adminUser && receivedPass === adminPass) {
     const { sign } = await import('hono/jwt')
     const { setCookie } = await import('hono/cookie')
 

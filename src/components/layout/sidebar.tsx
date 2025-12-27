@@ -143,7 +143,7 @@ export function Sidebar({
         <Button
           variant="outline"
           size="sm"
-          className="w-full border-red-700 hover:text-white bg-red-600/30 hover:bg-red-800 hover:border-red-600 transition-all duration-200"
+          className="w-full border-slate-700 hover:text-white bg-slate-600/30 hover:bg-red-800 hover:border-red-600 transition-all duration-200"
           onClick={onLogout}
         >
           Logout

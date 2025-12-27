@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2024-12-27
+
+### Fixed
+- **Credential Robustness**: Added automatic whitespace trimming for environment variables to prevent accidental login failures.
+
+### Changed
+- **Sidebar UX**: Refined the logout button styling with better contrast and hover effects.
+- **Login Aesthetics**: Enhanced the login card with improved shadows and visual depth.
+
 ## [1.3.0] - 2024-12-27
 
 ### Added
@@ -25,9 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Authentication Bypass**: Fixed an issue where the dashboard was accessible without login after page refreshes.
 - **Console Errors**: Resolved fetch 401 errors during the initial application load by handling auth verification more gracefully.
-
-### Changed
-- **Sidebar UX**: Added a dedicated logout button with a clear red visual indicator for better discoverability.
 
 ## [1.2.0] - 2024-12-26
 

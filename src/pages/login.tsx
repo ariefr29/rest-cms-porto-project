@@ -42,10 +42,10 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
             <div className="absolute top-0 -right-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000" />
             <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-4000" />
 
-            <Card className="w-full max-w-md z-10 border-border/50 bg-background/50 backdrop-blur-xl shadow-2xl animate-in fade-in zoom-in duration-500">
+            <Card className="w-full max-w-md z-10 border-border/50 bg-background/50 backdrop-blur-xl shadow-2xl shadow-blue-900/20 animate-in fade-in zoom-in duration-500">
                 <CardHeader className="space-y-1 text-center">
                     <div className="flex justify-center mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 ring-4 ring-blue-600/10">
+                        <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-900/20 ring-4 ring-blue-600/10">
                             <Globe className="h-6 w-6" />
                         </div>
                     </div>

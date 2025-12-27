@@ -2,7 +2,7 @@
 
 A modern, flexible headless CMS built with React and Hono. Create custom content structures visually and consume them via a clean REST API.
 
-[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](./docs/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.3.1-blue.svg)](./docs/CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
 ## ✨ Features
@@ -68,6 +68,8 @@ cp .env.example .env
 # ADMIN_USER=admin
 # ADMIN_PASS=yourpassword
 # JWT_SECRET=random_string
+
+> 💡 **Tip:** Restart the server (`npm run dev`) after any changes to the `.env` file.
 
 # Run migrations
 npm run db:migrate
