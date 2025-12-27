@@ -14,6 +14,7 @@ interface SidebarProps {
   onToggleTheme?: () => void
   onNavigate: (page: string, siteId?: number) => void
   onAddSite: () => void
+  onLogout: () => void
 }
 
 export function Sidebar({
@@ -24,7 +25,8 @@ export function Sidebar({
   theme,
   onToggleTheme,
   onNavigate,
-  onAddSite
+  onAddSite,
+  onLogout
 }: SidebarProps) {
   return (
     <div className={cn("w-64 border-r border-slate-800 bg-[#0f172a] dark:bg-background dark:border-border flex flex-col h-screen transition-all duration-300 ease-in-out text-slate-100 dark:text-foreground", className)}>
@@ -129,15 +131,23 @@ export function Sidebar({
       </ScrollArea>
 
       <div className="p-4 bg-[#0f172a] dark:bg-background border-t border-slate-800 dark:border-border">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-4">
           <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center text-xs font-bold text-white ring-2 ring-slate-800 dark:ring-border">
             A
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-white dark:text-foreground truncate">Admin User</p>
-            <p className="text-xs text-slate-500 dark:text-muted-foreground truncate">admin@example.com</p>
+            <p className="text-xs text-slate-500 dark:text-muted-foreground truncate">admin@cms.io</p>
           </div>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full border-red-700 hover:text-white bg-red-600/30 hover:bg-red-800 hover:border-red-600 transition-all duration-200"
+          onClick={onLogout}
+        >
+          Logout
+        </Button>
       </div>
     </div>
   )

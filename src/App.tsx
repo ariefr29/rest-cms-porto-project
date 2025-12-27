@@ -1,14 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Sidebar } from '@/components/layout/sidebar'
 import { DashboardPage } from '@/pages/dashboard'
 import { ProjectsPage } from '@/pages/projects'
 import { SiteDetailPage } from '@/pages/site-detail'
 import { ApiDocsPage } from '@/pages/api-docs'
+import { LoginPage } from '@/pages/login'
 import { AddSiteDialog } from '@/components/dialogs/add-site-dialog'
 import { Button } from '@/components/ui/button'
 
 import { api } from '@/lib/api'
-import { Menu, Globe } from 'lucide-react'
+import { Menu, Globe, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/hooks/use-theme'
 import { useCmsData } from '@/hooks/use-cms-data'
@@ -17,13 +18,30 @@ type Page = 'dashboard' | 'projects' | 'site' | 'api-docs'
 
 function App() {
   const { theme, toggleTheme } = useTheme()
-  const { sites, projects, isLoading, loadSites, loadProjects } = useCmsData()
+  const { sites, projects, isLoading, loadData, loadSites, loadProjects } = useCmsData()
 
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [currentPage, setCurrentPage] = useState<Page>('dashboard')
   const [currentSiteId, setCurrentSiteId] = useState<number | undefined>()
 
   const [isAddSiteOpen, setIsAddSiteOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const res = await api.auth.verify()
+      setIsAuthenticated(res.authenticated)
+    }
+    checkAuth()
+  }, [])
+
+  // Load CMS data only after authentication is confirmed
+  useEffect(() => {
+    if (isAuthenticated === true) {
+      loadData()
+    }
+  }, [isAuthenticated, loadData])
 
   const handleNavigate = (page: string, siteId?: number) => {
     setCurrentPage(page as Page)
@@ -36,6 +54,33 @@ function App() {
     setIsAddSiteOpen(false)
     await loadSites()
     handleNavigate('site', site.id)
+  }
+
+  const handleLogout = async () => {
+    try {
+      await api.auth.logout()
+      setIsAuthenticated(false)
+    } catch (err) {
+      console.error('Logout failed', err)
+      setIsAuthenticated(false)
+    }
+  }
+
+  const handleLoginSuccess = async () => {
+    setIsAuthenticated(true)
+    // Data will be loaded automatically by the useEffect above
+  }
+
+  if (isAuthenticated === null) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage onLoginSuccess={handleLoginSuccess} />
   }
 
   return (
@@ -60,6 +105,7 @@ function App() {
         onToggleTheme={toggleTheme}
         onNavigate={handleNavigate}
         onAddSite={() => setIsAddSiteOpen(true)}
+        onLogout={handleLogout}
       />
 
       <main className="flex-1 flex flex-col overflow-hidden relative bg-background">
